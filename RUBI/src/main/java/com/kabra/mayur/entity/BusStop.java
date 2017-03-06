@@ -5,27 +5,19 @@ import java.util.Set;
 
 public class BusStop {
 	
-	String name;
+	String tag;
+	String title;
 	Location location;
 	Set<Route> routesServed;
 	
-	public BusStop(String name, Location location) {
-		super();
-		this.name = name;
-		this.location = location;
-		this.routesServed = new HashSet<>();
+	public BusStop() {
+		routesServed = new HashSet<>();
 	}
 	public Location getLocation() {
 		return location;
 	}
 	public void setLocation(Location location) {
 		this.location = location;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
 	}
 	public Set<Route> getRoutesServed() {
 		return routesServed;
@@ -35,6 +27,23 @@ public class BusStop {
 	}
 	public void addRoute(Route route){
 		this.routesServed.add(route);
+		route.addBusStop(this);
+	}
+	public String getTag() {
+		return tag;
+	}
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	@Override
+	public String toString() {
+		return "BusStop [tag=" + tag + ", title=" + title + ", location=" + location + ", routesServed=" + routesServed + "]";
 	}
 	
 	

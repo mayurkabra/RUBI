@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.kabra.mayur.dao.BusDao;
 import com.kabra.mayur.entity.BusDirection;
+import com.kabra.mayur.entity.BusStop;
 import com.kabra.mayur.entity.BusStopRequest;
 import com.kabra.mayur.entity.Location;
 
@@ -21,8 +22,8 @@ public class BusService {
 	private BusDao busDao;
 	
 	public List<BusDirection> getFastestDirections(Location source, Location destination){
-		List<BusStopRequest> sourceStops = busDao.getClosestBusStops(source, NUMBER_OF_CLOSEST_BUS_STOPS);
-		List<BusStopRequest> destinationStops = busDao.getClosestBusStops(destination, NUMBER_OF_CLOSEST_BUS_STOPS);
+		List<BusStop> sourceStops = busDao.getPhysicallyClosestBusStops(source, NUMBER_OF_CLOSEST_BUS_STOPS);
+		List<BusStop> destinationStops = busDao.getPhysicallyClosestBusStops(destination, NUMBER_OF_CLOSEST_BUS_STOPS);
 		List<BusDirection> busDirections = busDao.getFastestBusDirectionsForGivenBusStopScenarios(sourceStops, destinationStops);
 		
 		return busDirections;

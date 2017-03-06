@@ -176,6 +176,93 @@
 		    </div>
 		  </fieldset>
 		</form>
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" href="#collapse1">Option 1: <!-- You will reach at XX:XX PM --><br/>Total Time (21 minutes) = Bus Time (10 minutes) + Walk Time (9 minutes) + Waiting Time (2 minutes)</a>
+					</h4>
+				</div>
+				<div id="collapse1" class="panel-collapse collapse">
+					<ul class="list-group">
+						<li class="list-group-item">
+							<div class="panel-group" style="margin-bottom: 0px;">
+							  <div class="panel panel-default">
+							    <div class="panel-heading">
+							      <h4 class="panel-title">
+							        <a data-toggle="collapse" href="#innercollapse1">Walk to the Quads (4 minutes)</a>
+							      </h4>
+							    </div>
+							    <div id="innercollapse1" class="panel-collapse collapse">
+							      <div class="panel-body"><iframe src="https://www.google.com/maps/embed?pb=!1m26!1m12!1m3!1d3032.924145218318!2d-74.43653353504543!3d40.52116767935308!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m11!3e2!4m3!3m2!1d40.522164499999995!2d-74.4356605!4m5!1s0x89c3c7be243f3807%3A0xc08ecfb005f17419!2sThe+Quads%2C+89+Rd+3%2C+Piscataway+Township%2C+NJ+08854!3m2!1d40.520413999999995!2d-74.4330325!5e0!3m2!1sen!2sus!4v1485766157517" width="400" height="300" frameborder="0" style="border:0" allowfullscreen></iframe></div>
+							    </div>
+							  </div>
+							</div>
+						</li>
+						<li class="list-group-item">Catch LX and get off at Scott Hall (12 minutes)</li>
+						<li class="list-group-item">
+						<div class="panel-group" style="margin-bottom: 0px;">
+							  <div class="panel panel-default">
+							    <div class="panel-heading">
+							      <h4 class="panel-title">
+							        <a data-toggle="collapse" href="#innercollapse2">Walk to 85 Easton Avenue (5 minutes)</a>
+							      </h4>
+							    </div>
+							    <div id="innercollapse2" class="panel-collapse collapse">
+							      <div class="panel-body"><iframe src="https://www.google.com/maps/embed?pb=!1m26!1m12!1m3!1d1516.9643677656043!2d-74.4503647919006!3d40.498958894838935!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m11!3e2!4m3!3m2!1d40.499621499999996!2d-74.4482488!4m5!1s0x89c3c655de5ef3a1%3A0xa0b5199f978a1c0c!2s85+Easton+Avenue%2C+New+Brunswick%2C+NJ+08901%2C+USA!3m2!1d40.4986207!2d-74.4508773!5e0!3m2!1sen!2sus!4v1485766806599" width="400" height="300" frameborder="0" style="border:0" allowfullscreen></iframe></div>
+							    </div>
+							  </div>
+							</div>
+						</li>
+					</ul>
+					<!-- <div class="panel-footer">Footer</div> -->
+				</div>
+			</div>
+		</div>
+
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<a data-toggle="collapse" href="#collapse2">Option 2: <!-- You will reach at XX:XX PM --><br/>Total Time (24 minutes) = Bus Time (12 minutes) + Walk Time (8 minutes) + Waiting Time (4 minutes)</a>
+					</h4>
+				</div>
+				<div id="collapse2" class="panel-collapse collapse">
+					<ul class="list-group">
+						<li class="list-group-item">
+							<div class="panel-group" style="margin-bottom: 0px;">
+							  <div class="panel panel-default">
+							    <div class="panel-heading">
+							      <h4 class="panel-title">
+							        <a data-toggle="collapse" href="#innercollapse3">Walk to the Quads (4 minutes)</a>
+							      </h4>
+							    </div>
+							    <div id="innercollapse3" class="panel-collapse collapse">
+							      <div class="panel-body"><iframe src="https://www.google.com/maps/embed?pb=!1m26!1m12!1m3!1d3032.924145218318!2d-74.43653353504543!3d40.52116767935308!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m11!3e2!4m3!3m2!1d40.522164499999995!2d-74.4356605!4m5!1s0x89c3c7be243f3807%3A0xc08ecfb005f17419!2sThe+Quads%2C+89+Rd+3%2C+Piscataway+Township%2C+NJ+08854!3m2!1d40.520413999999995!2d-74.4330325!5e0!3m2!1sen!2sus!4v1485766157517" width="400" height="300" frameborder="0" style="border:0" allowfullscreen></iframe></div>
+							    </div>
+							  </div>
+							</div>
+						</li>
+						<li class="list-group-item">Catch LX and get off at Scott Hall (12 minutes)</li>
+						<li class="list-group-item">
+						<div class="panel-group" style="margin-bottom: 0px;">
+							  <div class="panel panel-default">
+							    <div class="panel-heading">
+							      <h4 class="panel-title">
+							        <a data-toggle="collapse" href="#innercollapse4">Walk to 85 Easton Avenue (5 minutes)</a>
+							      </h4>
+							    </div>
+							    <div id="innercollapse4" class="panel-collapse collapse">
+							      <div class="panel-body"><iframe src="https://www.google.com/maps/embed?pb=!1m26!1m12!1m3!1d1516.9643677656043!2d-74.4503647919006!3d40.498958894838935!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m11!3e2!4m3!3m2!1d40.499621499999996!2d-74.4482488!4m5!1s0x89c3c655de5ef3a1%3A0xa0b5199f978a1c0c!2s85+Easton+Avenue%2C+New+Brunswick%2C+NJ+08901%2C+USA!3m2!1d40.4986207!2d-74.4508773!5e0!3m2!1sen!2sus!4v1485766806599" width="400" height="300" frameborder="0" style="border:0" allowfullscreen></iframe></div>
+							    </div>
+							  </div>
+							</div>
+						</li>
+					</ul>
+					<!-- <div class="panel-footer">Footer</div> -->
+				</div>
+			</div>
+		</div>
 	</div>
 	<footer class="footer">
       <div class="container">

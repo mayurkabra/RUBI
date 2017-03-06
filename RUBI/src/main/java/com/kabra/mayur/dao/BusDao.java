@@ -1,34 +1,67 @@
 package com.kabra.mayur.dao;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
+import com.kabra.mayur.cached.DataStore;
 import com.kabra.mayur.entity.BusDirection;
+import com.kabra.mayur.entity.BusStop;
 import com.kabra.mayur.entity.BusStopRequest;
 import com.kabra.mayur.entity.Location;
+import com.kabra.mayur.entity.Route;
 
 @Repository
 public class BusDao {
 	
-	public List<BusStopRequest> getClosestBusStops(Location location, int k){
-		List<BusStopRequest> orderedList = new ArrayList<>();
-		
-		return orderedList;
+	public List<BusStop> getPhysicallyClosestBusStops(Location location, int k){
+		//List<BusStopRequest> orderedList = new ArrayList<>();
+		List<BusStop> busStops = new ArrayList<>(DataStore.busStopMap.values());
+		BusStop dummyBusStop = new BusStop();
+		dummyBusStop.setLocation(location);
+		Collections.sort(busStops, sortBusStopComparator(dummyBusStop));
+		return busStops;
 	}
 
-	public List<BusDirection> getFastestBusDirectionsForGivenBusStopScenarios(List<BusStopRequest> sourceStops, List<BusStopRequest> destinationStops) {
+	private Comparator<BusStop> sortBusStopComparator(BusStop dummyBusStop) {
+		return new Comparator<BusStop>() {
+			@Override
+			public int compare(BusStop o1, BusStop o2) {
+				double ds0 = o1.getLocation().getPoint2d().distanceSq(dummyBusStop.getLocation().getPoint2d());
+                double ds1 = o2.getLocation().getPoint2d().distanceSq(dummyBusStop.getLocation().getPoint2d());
+                return Double.compare(ds0, ds1);
+			}
+		};
+	}
+
+	public List<BusDirection> getFastestBusDirectionsForGivenBusStopScenarios(List<BusStop> sourceStops, List<BusStop> destinationStops) {
 		List<BusDirection> busDirections = new ArrayList<>();
-		
-		for(BusStopRequest sourceBusStopRequest : sourceStops){
-			for(BusStopRequest destBusStopRequest : destinationStops ){
+		List<BusStopRequest> sourceStopsTime = new ArrayList<>();
+		List<BusStopRequest> destinationStopsTime = new ArrayList<>();
+		populateTimeWiseClosestBusStops(sourceStops, destinationStops, sourceStopsTime, destinationStopsTime);
+		for(BusStopRequest sourceBusStopRequest : sourceStopsTime){
+			for(BusStopRequest destBusStopRequest : destinationStopsTime ){
 				BusDirection busDirection = this.findFastestBusOptionBetweenStopsAfterCertainTime(sourceBusStopRequest, destBusStopRequest);
 				busDirections.add(busDirection);
 			}
 		}
 		
 		return busDirections;
+	}
+
+	private void populateTimeWiseClosestBusStops(List<BusStop> sourceStops, List<BusStop> destinationStops,
+			List<BusStopRequest> sourceStopsTime, List<BusStopRequest> destinationStopsTime) {
+		Map<Route, List<BusStop>> routeToStop = new HashMap<>();
+		int i = 0;
+		/*while(i<sourceStops.size()){
+			BusStop s = sourceStops.get(i);
+			BusStop d = destinationStops.get(i);
+		}*/
 	}
 
 	private BusDirection findFastestBusOptionBetweenStopsAfterCertainTime(BusStopRequest sourceBusStopRequest, BusStopRequest destBusStopRequest) {
