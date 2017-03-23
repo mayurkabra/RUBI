@@ -13,6 +13,9 @@
        * element that contains the map. */
       #map {
         height: 50vh;
+        border-top: 2px solid #000;
+	    border-left: 2px solid #000;
+	    border-right: 2px solid #000;
       }
       #description {
         font-family: Roboto;
@@ -81,6 +84,30 @@
         font-weight: 500;
         padding: 6px 12px;
       }
+      
+      .location-type-selected{
+      	border-left-color: black;
+	    border-right-color: black;
+	    border-bottom-color: black;
+      }
+      
+      .location-type-selected:hover{
+      	border-left-color: black;
+	    border-right-color: black;
+	    border-bottom-color: black;
+      }
+      
+      .location-type-not-selected{
+      	border-top-color: black;
+      }
+      
+      .location-type-not-selected:hover{
+      	border-top-color: black;
+      }
+      
+      .location-type{
+      	border-radius: 0px;
+      }
     </style>
 </head>
 <body>
@@ -102,6 +129,7 @@
 	  </div>
 	</nav>
 	<div class="container">
+	<input type="text" id="testAutocomplete" />
 		<div class="pac-card" id="pac-card">
 	      <div>
 	        <div id="title">
@@ -169,12 +197,20 @@
 		  </fieldset>
 		  <fieldset>
 		    <div class="form-group">
-		      <div class="col-lg-10 col-lg-offset-2">
-		        <button type="reset" class="btn btn-default">Cancel</button>
-		        <button type="submit" class="btn btn-primary">Submit</button>
-		      </div>
+			    <div class="col-xs-12">
+				   <div class="btn btn-warning col-xs-6 location-type location-type-selected info-incomplete" onclick="javascript:locationTypeSwitch();">From</div>
+				   <div class="btn btn-warning col-xs-6 location-type location-type-not-selected info-incomplete" onclick="javascript:locationTypeSwitch();">To</div>
+		           <button type="submit" class="btn btn-primary col-xs-12">Get Directions</button>		
+				</div>
 		    </div>
 		  </fieldset>
+		  <!-- <fieldset>
+		    <div class="form-group">
+		      <div class="col-xs-12">
+		        <button type="submit" class="btn btn-primary col-xs-12">Submit</button>
+		      </div>
+		    </div>
+		  </fieldset> -->
 		</form>
 	</div>
 	<footer class="footer">

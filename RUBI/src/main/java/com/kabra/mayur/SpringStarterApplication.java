@@ -11,6 +11,7 @@ import org.springframework.web.servlet.view.JstlView;
 public class SpringStarterApplication {
 
 	public static void main(String[] args) {
+		System.setProperty("java.awt.headless", "false"); 
 		SpringApplication.run(SpringStarterApplication.class, args);
 	}
 	

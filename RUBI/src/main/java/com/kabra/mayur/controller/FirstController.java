@@ -19,7 +19,7 @@ public class FirstController {
 	@RequestMapping(value="parameterTest")
 	public ModelAndView parameterTest(String testName, Model model){
 		model.addAttribute("passedParameter", testName);
-		ModelAndView modelAndView = new ModelAndView("parameterTestView");
+		ModelAndView modelAndView = new ModelAndView("fromToForm");
 		return modelAndView;
 	}
 

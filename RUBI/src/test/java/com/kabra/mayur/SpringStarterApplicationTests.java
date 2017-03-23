@@ -1,5 +1,10 @@
 package com.kabra.mayur;
 
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Path;
+import org.graphstream.graph.implementations.SingleGraph;
+import org.graphstream.ui.view.Viewer;
+import org.graphstream.util.cumulative.GraphSpells;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,15 +26,62 @@ public class SpringStarterApplicationTests {
 	public void httpTest(){
 		//HTTPListener.getDocument("http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=routeConfig");
 		DataStore.updateCache();
-		for (Route route : DataStore.routes) {
+		for (Route route : DataStore.routesMap.values()) {
 			System.out.println(route);
 		}
-		for (Route route : DataStore.routes) {
+		for (Route route : DataStore.routesMap.values()) {
 			System.out.println(route.getQueryForPredictions());
 		}
 		for(BusStop busStop : DataStore.busStopMap.values()){
 			System.out.println(busStop);
 		}
+	}
+	
+	@Test
+	public void predListenerTest(){
+		//DataStore.updateConnections();
+		DataStore.aStar.compute("NODE_BUS_STOP-=-pubsafn","NODE_BUS_STOP-=-werblinm");
+		Path shortestPath = DataStore.aStar.getShortestPath();
+		shortestPath.getEdgeSet().forEach(edge->{
+			System.out.println(edge);
+		});
+	}
+	
+	@Test
+	public void classTest(){
+		System.setProperty("java.awt.headless", "false"); 
+		Graph graph = new SingleGraph("classTest");
+		graph.display();
+		for(int i = 0 ; i < 11 ; i++){
+			graph.addNode(""+i);
+		}
+		int[][] test = {
+				{},
+				{1},
+				{1,1},
+				{1,0,1},
+				{1,0,1,1},
+				{1,0,1,0,1},
+				{1,0,1,0,1,1},
+				{1,1,1,0,0,0,1},
+				{1,1,1,0,1,1,1,1},
+				{1,1,1,1,1,1,1,0,1},
+				{1,1,1,1,1,1,1,1,1,1}};
+		for(int i = 0 ; i < test.length ; i++){
+			for(int j = 0 ; j < test[i].length ; j++){
+				if(test[i][j]==1){
+					graph.addEdge(""+i+""+j, ""+i, ""+j);
+				}
+			}
+			
+		}
+		int v = graph.getNodeCount();
+		System.out.println("Number of vertices: " + v);
+		int e = graph.getEdgeCount();
+		System.out.println("Number of edges: " + e);
+		System.out.println("Density of graph: " + (2.0*e/(v*(v-1))));
+		System.out.println("Degree of graph: " + (2.0*e/v));
+		
 	}
 
 }

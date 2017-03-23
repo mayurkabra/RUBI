@@ -1,9 +1,52 @@
+function findWay(){
+	var dto = { fromLat: $('#fromLat').val(), fromLng: $('#fromLng').val(), toLat: $('#toLat').val(), toLng: $('#toLng').val() };
+	$.ajax({
+		method: "POST",
+		url: "../direction/findWayAjax",
+		data: dto,
+		success: function( msg ) {
+			//alert( msg );
+			$('#results').html(msg);
+		},
+		error:function( msg ) {
+			alert( dto );
+		}
+	});
+}
+
 function showPosition(position) {
 	$("#fromLat").val(position.lat);
 	$("#fromLon").val(position.lng);
 }
 
+function locationTypeSwitch(){
+	var a = $('.location-type-not-selected').first();
+	var b = $('.location-type-selected').first();
+	a.addClass('location-type-selected');
+	a.removeClass('location-type-not-selected');
+	b.addClass('location-type-not-selected');
+	b.removeClass('location-type-selected');
+}
+
+function fillLocationForm(lat, lng){
+	var locationType = $('.location-type-selected').first();
+	if(locationType.val()=="From"){
+		$('#fromLat').val(lat);
+		$('#fromLon').val(lng);
+		locationTypeSwitch();
+	} else{
+		$('#toLat').val(lat);
+		$('#toLon').val(lng);
+		locationTypeSwitch();
+	}
+	locationType.addClass('info-complete');
+	locationType.removeClass('info-incomplete');
+}
+
 function initMap() {
+	
+	var autoTest = new google.maps.places.Autocomplete(document.getElementById('testAutocomplete'));
+	
     var map = new google.maps.Map(document.getElementById('map'), {
       center: {lat: 40.4988, lng: -74.450},
       zoom: 13
@@ -60,8 +103,9 @@ function initMap() {
         return;
       }
       //alert(place.geometry.location);
-      $('#toLat').val(place.geometry.location.lat());
-      $('#toLon').val(place.geometry.location.lng());
+      /*$('#toLat').val(place.geometry.location.lat());
+      $('#toLon').val(place.geometry.location.lng());*/
+      fillLocationForm(place.geometry.location.lat(), place.geometry.location.lng());
       // If the place has a geometry, then present it on a map.
       if (place.geometry.viewport) {
         map.fitBounds(place.geometry.viewport);

@@ -10,14 +10,14 @@ import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 import com.kabra.mayur.cached.DataStore;
-import com.kabra.mayur.entity.BusDirection;
+import com.kabra.mayur.entity.DirectionStepWait;
 import com.kabra.mayur.entity.BusStop;
 import com.kabra.mayur.entity.BusStopRequest;
 import com.kabra.mayur.entity.Location;
 import com.kabra.mayur.entity.Route;
 
 @Repository
-public class BusDao {
+public class BusDAO {
 	
 	public List<BusStop> getPhysicallyClosestBusStops(Location location, int k){
 		//List<BusStopRequest> orderedList = new ArrayList<>();
@@ -39,14 +39,14 @@ public class BusDao {
 		};
 	}
 
-	public List<BusDirection> getFastestBusDirectionsForGivenBusStopScenarios(List<BusStop> sourceStops, List<BusStop> destinationStops) {
-		List<BusDirection> busDirections = new ArrayList<>();
+	public List<DirectionStepWait> getFastestBusDirectionsForGivenBusStopScenarios(List<BusStop> sourceStops, List<BusStop> destinationStops) {
+		List<DirectionStepWait> busDirections = new ArrayList<>();
 		List<BusStopRequest> sourceStopsTime = new ArrayList<>();
 		List<BusStopRequest> destinationStopsTime = new ArrayList<>();
 		populateTimeWiseClosestBusStops(sourceStops, destinationStops, sourceStopsTime, destinationStopsTime);
 		for(BusStopRequest sourceBusStopRequest : sourceStopsTime){
 			for(BusStopRequest destBusStopRequest : destinationStopsTime ){
-				BusDirection busDirection = this.findFastestBusOptionBetweenStopsAfterCertainTime(sourceBusStopRequest, destBusStopRequest);
+				DirectionStepWait busDirection = this.findFastestBusOptionBetweenStopsAfterCertainTime(sourceBusStopRequest, destBusStopRequest);
 				busDirections.add(busDirection);
 			}
 		}
@@ -64,8 +64,8 @@ public class BusDao {
 		}*/
 	}
 
-	private BusDirection findFastestBusOptionBetweenStopsAfterCertainTime(BusStopRequest sourceBusStopRequest, BusStopRequest destBusStopRequest) {
-		BusDirection busDirection = new BusDirection();
+	private DirectionStepWait findFastestBusOptionBetweenStopsAfterCertainTime(BusStopRequest sourceBusStopRequest, BusStopRequest destBusStopRequest) {
+		DirectionStepWait busDirection = new DirectionStepWait();
 		return busDirection;
 	}
 
