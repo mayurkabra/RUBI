@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.graphstream.algorithm.AStar;
 import org.graphstream.graph.Edge;
@@ -54,14 +56,18 @@ public class DataStore {
 	
 	public static Document document = null;
 	public static Document predictionsDocument = null;
+	private static long predictionTimeStamp = -1l;
 	//public static List<Route> routes = null;
 	public static Map<String, Route> routesMap = null;
 	public static Map<String, BusStop> busStopMap = null;
 	public static Graph graph = new MultiGraph(BUS_STOPS_GRAPH_ID);
 	public static AStar aStar = new AStar(graph);
-	public static Map<Vehicle, TreeSet<ArrivalPrediction>> predictionMap = new HashMap<>();
+	public static Map<Vehicle, TreeSet<ArrivalPrediction>> vehiclePredictionMap = new HashMap<>();
+	public static Map<Vehicle, ArrivalPrediction> latestVehiclePredictionMap = new HashMap<>();
 	public static Map<String, HashSet<ArrivalPrediction>> stopPredictionsMap = new HashMap<>();
 	public static Set<String> temporaryNodes = new HashSet<>();
+	
+	public static Lock lock = new ReentrantLock();
 	
 	public static void updateCache (){
 		if(document==null){
@@ -105,49 +111,87 @@ public class DataStore {
 	
 	public static void updateConnections(Map<String, Long> interestedBusStopsMap){
 		try {
-			updateCache();
-			predictionsDocument = HTTPListener.getDocument(COMPLETED_PREDICTIONS_FOR_MULTIPLE_BUS_STOPS);
-			NodeList predictionsNodes = predictionsDocument.getElementsByTagName("predictions");
-			stopPredictionsMap = new HashMap<>();
-			for(int i = 0 ; i < predictionsNodes.getLength() ; i++){
-				Element predictionsElement = getNodeAsElement(predictionsNodes, i);
-				NodeList directions = predictionsElement.getElementsByTagName("direction");
-				String busStopTag = predictionsElement.getAttribute("stopTag");
-				String routeTag = predictionsElement.getAttribute("routeTag");
-				Route route = routesMap.get(routeTag);
-				for(int j = 0 ; j < directions.getLength() ; j++){
-					Element directionElement = getNodeAsElement(directions, j);
-					NodeList predictionList = directionElement.getElementsByTagName("prediction");
-					for(int k = 0 ; k < predictionList.getLength() ; k++){
-						Element prediction = getNodeAsElement(predictionList, k);
-						String vehicleNumber = prediction.getAttribute("vehicle");
-						Vehicle vehicle = new Vehicle();
-						vehicle.setRoute(route);
-						vehicle.setVehicleNumber(vehicleNumber);
-						String arrivalEpochTime = prediction.getAttribute("epochTime");
-						String arrivalSeconds = prediction.getAttribute("seconds");
-						if(!predictionMap.containsKey(vehicle)){
-							predictionMap.put(vehicle, new TreeSet<>());
-						}
-						ArrivalPrediction arrivalPrediction = new ArrivalPrediction(Long.parseLong(arrivalEpochTime), busStopMap.get(busStopTag), vehicle, route);
-						predictionMap.get(vehicle).add(arrivalPrediction);
-						if(!stopPredictionsMap.containsKey(busStopTag)){
-							stopPredictionsMap.put(busStopTag , new HashSet<>());
-						}
-						stopPredictionsMap.get(busStopTag).add(arrivalPrediction);
-					}
-				}
-			}
-			System.out.println(predictionMap);
+			updatePredictionsMaps();
+			System.out.println(vehiclePredictionMap);
 			//eraseTemporaryNodes();
 			for (Entry<String, Long> entry : interestedBusStopsMap.entrySet()) {
 				createNewNodesAndEdgesForGivenStop(entry.getValue(), entry.getKey());
 			}
-			System.out.println(predictionMap);
+			System.out.println(vehiclePredictionMap);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public static void updatePredictionsMaps() {
+		updateCache();
+		vehiclePredictionMap = new HashMap<>();
+		stopPredictionsMap = new HashMap<>();
+		predictionsDocument = HTTPListener.getDocument(COMPLETED_PREDICTIONS_FOR_MULTIPLE_BUS_STOPS);
+		NodeList predictionsNodes = predictionsDocument.getElementsByTagName("predictions");
+		//stopPredictionsMap = new HashMap<>();
+		for(int i = 0 ; i < predictionsNodes.getLength() ; i++){
+			Element predictionsElement = getNodeAsElement(predictionsNodes, i);
+			NodeList directions = predictionsElement.getElementsByTagName("direction");
+			String busStopTag = predictionsElement.getAttribute("stopTag");
+			String routeTag = predictionsElement.getAttribute("routeTag");
+			Route route = routesMap.get(routeTag);
+			for(int j = 0 ; j < directions.getLength() ; j++){
+				Element directionElement = getNodeAsElement(directions, j);
+				NodeList predictionList = directionElement.getElementsByTagName("prediction");
+				for(int k = 0 ; k < predictionList.getLength() ; k++){
+					Element prediction = getNodeAsElement(predictionList, k);
+					String vehicleNumber = prediction.getAttribute("vehicle");
+					Vehicle vehicle = new Vehicle();
+					vehicle.setRoute(route);
+					vehicle.setVehicleNumber(vehicleNumber);
+					String arrivalEpochTime = prediction.getAttribute("epochTime");
+					String arrivalSeconds = prediction.getAttribute("seconds");
+					if(!vehiclePredictionMap.containsKey(vehicle)){
+						vehiclePredictionMap.put(vehicle, new TreeSet<>());
+					}
+					ArrivalPrediction arrivalPrediction = new ArrivalPrediction(Long.parseLong(arrivalEpochTime), busStopMap.get(busStopTag), vehicle, route);
+					vehiclePredictionMap.get(vehicle).add(arrivalPrediction);
+					if(!stopPredictionsMap.containsKey(busStopTag)){
+						stopPredictionsMap.put(busStopTag , new HashSet<>());
+					}
+					stopPredictionsMap.get(busStopTag).add(arrivalPrediction);
+				}
+			}
+		}
+		updateAnalyticalData();
+	}
+
+	private static void updateAnalyticalData() {
+		for(Vehicle vehicle : vehiclePredictionMap.keySet()){
+			TreeSet<ArrivalPrediction> arrivalPredictionsForVehicle = vehiclePredictionMap.get(vehicle);
+			if (arrivalPredictionsForVehicle != null && !arrivalPredictionsForVehicle.isEmpty()) {
+				ArrivalPrediction latestPredictionForVehicle = arrivalPredictionsForVehicle.first();
+				ArrivalPrediction persistedLatest = latestVehiclePredictionMap.get(vehicle);
+				if(persistedLatest == null){
+					latestVehiclePredictionMap.put(vehicle, latestPredictionForVehicle);
+					//new entry in db
+					System.out.println(vehicle.getVehicleNumber() + " " + vehicle.getRoute().getTag() + " " + new Date(latestPredictionForVehicle.getArrivalEpochTime()) + " " + latestPredictionForVehicle.getBusStop().getTag());
+				} else{
+					if(!persistedLatest.getRoute().getTag().equals(latestPredictionForVehicle.getRoute().getTag()) || !persistedLatest.getBusStop().getTag().equals(latestPredictionForVehicle.getBusStop().getTag())){
+						latestVehiclePredictionMap.put(vehicle, latestPredictionForVehicle);
+						//new entry in db
+						System.out.println(vehicle.getVehicleNumber() + " " + vehicle.getRoute().getTag() + " " + new Date(latestPredictionForVehicle.getArrivalEpochTime()) + " " + latestPredictionForVehicle.getBusStop().getTag());
+					} else{
+						//update latest entry
+					}
+				}
+			}else {
+				if(latestVehiclePredictionMap.containsKey(vehicle)){
+					latestVehiclePredictionMap.remove(vehicle);
+				}
+			}
+		}
+		/*for(Vehicle vehicle : latestVehiclePredictionMap.keySet()){
+			System.out.println(vehicle.getVehicleNumber() + " " + vehicle.getRoute().getTag() + " " + latestVehiclePredictionMap.get(vehicle).getArrivalEpochTime());
+		}*/
+		System.out.println("---------------------------------------");
 	}
 
 	private static void eraseTemporaryNodes() {
@@ -158,8 +202,6 @@ public class DataStore {
 			}
 		}
 		temporaryNodes = new HashSet<>();
-		predictionMap = new HashMap<>();
-		stopPredictionsMap = new HashMap<>();
 	}
 
 	private static void createNewNodesAndEdgesForGivenStop(long startTime, String stop) {
@@ -181,7 +223,7 @@ public class DataStore {
 					edge.addAttribute("fromTime", startTime);
 					edge.addAttribute("toTime", arrivalPrediction.getArrivalEpochTime());
 					edge.addAttribute("weight", arrivalPrediction.getArrivalEpochTime()-startTime);
-					TreeSet<ArrivalPrediction> predictionsForVehicle = predictionMap.get(arrivalPrediction.getVehicle());
+					TreeSet<ArrivalPrediction> predictionsForVehicle = vehiclePredictionMap.get(arrivalPrediction.getVehicle());
 					for(ArrivalPrediction vehiclePrediction : predictionsForVehicle){
 						BusStop currBusStop = vehiclePrediction.getBusStop();
 						if (vehiclePrediction.getArrivalEpochTime() - arrivalPrediction.getArrivalEpochTime() > 0 && !avoidOverlaps.contains(waitNode + "-" + currBusStop.getTag())) {

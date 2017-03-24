@@ -28,26 +28,32 @@
 	
 	<div class="container">
 		<div class="row">
-			<h4>From</h4>
-		</div>
-		<div class="row">
-			<input type="text" id="fromAddress" class="col-xs-12"/>
-			<input type="hidden" id="fromLat" />
-			<input type="hidden" id="fromLng" />
-		</div>
-		<div class="row">
-			<div id="fromMap" class="col-xs-12" style="height: 80vh;"></div>
-		</div>
-		<div class="row">
-			<h4>To</h4>
-		</div>
-		<div class="row">
-			<input type="text" id="toAddress" class="col-xs-12"/>
-			<input type="hidden" id="toLat" />
-			<input type="hidden" id="toLng" />
-		</div>
-		<div class="row">
-			<div id="toMap" class="col-xs-12" style="height: 80vh;"></div>
+			<div class="col-xs-12 col-lg-6">
+				<div class="row col-xs-12">
+					<h4>From</h4>
+				</div>
+				<div class="row col-xs-12">
+					<input type="text" id="fromAddress" class="col-xs-12"/>
+					<input type="hidden" id="fromLat" />
+					<input type="hidden" id="fromLng" />
+				</div>
+				<div class="row col-xs-12">
+					<div id="fromMap" class="col-xs-12" style="height: 60vh;"></div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-lg-6">
+				<div class="row col-xs-12">
+				<h4>To</h4>
+				</div>
+				<div class="row col-xs-12">
+					<input type="text" id="toAddress" class="col-xs-12"/>
+					<input type="hidden" id="toLat" />
+					<input type="hidden" id="toLng" />
+				</div>
+				<div class="row col-xs-12">
+					<div id="toMap" class="col-xs-12" style="height: 60vh;"></div>
+				</div>
+			</div>
 		</div>
 		<div class="row" style="height: 2vh;">
 			&nbsp;

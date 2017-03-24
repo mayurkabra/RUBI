@@ -34,6 +34,7 @@ public class BusService {
 		long startTime = new Date().getTime();
 		List<DirectionSet> allOptions = new ArrayList<>();
 		try {
+			DataStore.lock.lock();
 			DataStore.addUserNodes(source, destination, startTime);
 			for (int i = 0; i < 5; i++) {
 				DataStore.aStar.compute(DataStore.getUserSourceNodeName(), DataStore.getUserDestinationNodeName());//DataStore.getUserDestinationNodeName(destination));
@@ -107,6 +108,7 @@ public class BusService {
 			e.printStackTrace();
 		} finally{
 			DataStore.removeUserNodes(source, destination);
+			DataStore.lock.unlock();
 		}
 		return allOptions;
 	}
