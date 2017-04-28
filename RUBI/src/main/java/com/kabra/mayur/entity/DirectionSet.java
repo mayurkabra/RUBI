@@ -12,8 +12,17 @@ public class DirectionSet implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private long walkingTime;
+	public int getBusChangeCount() {
+		return busChangeCount;
+	}
+
+	public void setBusChangeCount(int busChangeCount) {
+		this.busChangeCount = busChangeCount;
+	}
+
 	private long waitingTime;
 	private long busRouteTime;
+	private int busChangeCount;
 	
 	List<DirectionStep> stepByStepDirections;
 

@@ -28,7 +28,7 @@ public class BusService {
 	@Autowired
 	private BusDAO busDao;
 	
-	public List<DirectionSet> getFastestDirections(Location source, Location destination) throws Exception{
+	public List<DirectionSet> getFastestDirections(Location source, Location destination, boolean notransfer) throws Exception{
 		String returnString = "";
 		/*Viewer viewer = DataStore.graph.display();*/
 		long startTime = new Date().getTime();
@@ -80,6 +80,7 @@ public class BusService {
 						bus.setStartAndEndTimes(fromTime, toTime);
 						fastestOption.getStepByStepDirections().add(bus);
 						fastestOption.setBusRouteTime(toTime - fromTime + fastestOption.getBusRouteTime());
+						fastestOption.setBusChangeCount(fastestOption.getBusChangeCount()+1);
 					} else if (mode.equals(Mode.WAITING)) {
 						waitingEdgeCount++;
 						String routeName = edge.getAttribute("routeName");
@@ -97,7 +98,12 @@ public class BusService {
 					}
 					endTime += toTime - fromTime;
 				}
+				fastestOption.setBusChangeCount(waitingEdgeCount);
 				fastestOption.setStartAndEndTimes(startTime, endTime);
+				if(notransfer && waitingEdgeCount>1){
+					i--;
+					continue;
+				}
 				allOptions.add(fastestOption);
 				if(shortestPath.getEdgeCount()==1){
 					break;
@@ -111,6 +117,14 @@ public class BusService {
 			DataStore.lock.unlock();
 		}
 		return allOptions;
+	}
+	
+	public List getOptionsForFilter(String route, String stop, Date from, Date to){
+		return busDao.getOptionsForFilter(route, stop, from, to);
+	}
+
+	public List stopwiseChartValues(String stop, Date from, Date to) {
+		return busDao.stopwiseChartValues(stop, from, to);
 	}
 
 }

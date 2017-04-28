@@ -3,8 +3,7 @@ package com.kabra.mayur;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Path;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.view.Viewer;
-import org.graphstream.util.cumulative.GraphSpells;
+import org.hibernate.Session;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.kabra.mayur.cached.DataStore;
 import com.kabra.mayur.entity.BusStop;
 import com.kabra.mayur.entity.Route;
+import com.kabra.mayur.utility.HibernateUtil;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -82,6 +82,34 @@ public class SpringStarterApplicationTests {
 		System.out.println("Density of graph: " + (2.0*e/(v*(v-1))));
 		System.out.println("Degree of graph: " + (2.0*e/v));
 		
+	}
+	
+	/*@Test
+	public void dataSourceStringTest(){
+		SQLServerDataSource dataSource = new SQLServerDataSource();
+		dataSource.setServerName("MAYUR-KABRA-PC");
+		dataSource.setIntegratedSecurity(true);
+		dataSource.setDatabaseName("RUBI");
+		dataSource.setInstanceName("SQL2014");
+		System.out.println(dataSource.getURL());
+	}*/
+	
+	@Test
+	public void dbTest(){
+		Session session = HibernateUtil.getSessionFactory().openSession();
+	    session.beginTransaction();
+
+	    // Check database version
+	    String sql = "select @@version";
+
+	    String result = (String) session.createNativeQuery(sql).getSingleResult();
+	    System.out.println(result);
+
+	    session.getTransaction().commit();
+	    session.close();
+
+	    
+	    HibernateUtil.shutdown();
 	}
 
 }

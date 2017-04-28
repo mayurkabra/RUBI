@@ -1,6 +1,7 @@
 package com.kabra.mayur.cached;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,20 +24,26 @@ import org.graphstream.graph.implementations.MultiGraph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.kabra.mayur.dao.BusDAO;
 import com.kabra.mayur.entity.ArrivalPrediction;
 import com.kabra.mayur.entity.BusStop;
 import com.kabra.mayur.entity.Location;
 import com.kabra.mayur.entity.Mode;
 import com.kabra.mayur.entity.Route;
 import com.kabra.mayur.entity.Vehicle;
+import com.kabra.mayur.entity.VehicleArrival;
 import com.kabra.mayur.utility.HTTPListener;
 
 public class DataStore {
+	
+	private static BusDAO busDAO = new BusDAO();
+	
 	private static final String GRAPH_EDGE_PRE_NAME_WAIT = "EDGE_WAIT";
 	private static final String GRAPH_NODE_PRE_NAME_WAIT = "NODE_WAIT";
 	private static final String GRAPH_EDGE_PRE_NAME_PREDICTION = "EDGE_PRED";
@@ -169,15 +176,26 @@ public class DataStore {
 			if (arrivalPredictionsForVehicle != null && !arrivalPredictionsForVehicle.isEmpty()) {
 				ArrivalPrediction latestPredictionForVehicle = arrivalPredictionsForVehicle.first();
 				ArrivalPrediction persistedLatest = latestVehiclePredictionMap.get(vehicle);
+				Date date = new Date(latestPredictionForVehicle.getArrivalEpochTime());
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(date);
 				if(persistedLatest == null){
 					latestVehiclePredictionMap.put(vehicle, latestPredictionForVehicle);
 					//new entry in db
-					System.out.println(vehicle.getVehicleNumber() + " " + vehicle.getRoute().getTag() + " " + new Date(latestPredictionForVehicle.getArrivalEpochTime()) + " " + latestPredictionForVehicle.getBusStop().getTag());
+					VehicleArrival vehicleArrival = new VehicleArrival(latestPredictionForVehicle.getArrivalEpochTime(), vehicle.getVehicleNumber(), vehicle.getRoute().getTag(), latestPredictionForVehicle.getBusStop().getTag(), date, calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_WEEK), calendar.get(Calendar.HOUR_OF_DAY));
+					System.out.println(vehicle.getVehicleNumber() + " " + vehicle.getRoute().getTag() + " " + date + " " + latestPredictionForVehicle.getBusStop().getTag());
+					//busDAO.getSessionFactory().getCurrentSession().save(vehicleArrival);
+					//HibernateUtil.getSessionFactory().getCurrentSession().save(vehicleArrival);
+					busDAO.saveVehicleArrivals(vehicleArrival);
 				} else{
 					if(!persistedLatest.getRoute().getTag().equals(latestPredictionForVehicle.getRoute().getTag()) || !persistedLatest.getBusStop().getTag().equals(latestPredictionForVehicle.getBusStop().getTag())){
 						latestVehiclePredictionMap.put(vehicle, latestPredictionForVehicle);
 						//new entry in db
-						System.out.println(vehicle.getVehicleNumber() + " " + vehicle.getRoute().getTag() + " " + new Date(latestPredictionForVehicle.getArrivalEpochTime()) + " " + latestPredictionForVehicle.getBusStop().getTag());
+						VehicleArrival vehicleArrival = new VehicleArrival(latestPredictionForVehicle.getArrivalEpochTime(), vehicle.getVehicleNumber(), vehicle.getRoute().getTag(), latestPredictionForVehicle.getBusStop().getTag(), date, calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_WEEK), calendar.get(Calendar.HOUR_OF_DAY));
+						System.out.println(vehicle.getVehicleNumber() + " " + vehicle.getRoute().getTag() + " " + date + " " + latestPredictionForVehicle.getBusStop().getTag());
+						//busDAO.getSessionFactory().getCurrentSession().save(vehicleArrival);
+						//HibernateUtil.getSessionFactory().getCurrentSession().save(vehicleArrival);
+						busDAO.saveVehicleArrivals(vehicleArrival);
 					} else{
 						//update latest entry
 					}

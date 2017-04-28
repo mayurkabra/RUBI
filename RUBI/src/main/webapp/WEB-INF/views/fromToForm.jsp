@@ -17,11 +17,17 @@
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 	      </button>
-	      <a class="navbar-brand" href="#">Rutgers University Buses Insight</a>
+	      <a class="navbar-brand" href="../first/parameterTest">Rutgers University Buses Insight</a>
 	    </div>
 	
 	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-	      
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="#">Point-to-Point Directions</a></li>
+				<li><a href="../analytics/currentGraphForm">Current Status</a></li>
+				<li><a href="../analytics/hourlyChartForm">Hourly Analytics: Routewise</a></li>
+				<li><a href="../analytics/stopwiseChartForm">Weekly Analytics: Stopwise</a></li>
+				<li><a href="../analytics/hashtag"><b>#</b>RUBuses</a></li>
+			</ul>
 	    </div>
 	  </div>
 	</nav>
@@ -58,7 +64,11 @@
 		<div class="row" style="height: 2vh;">
 			&nbsp;
 		</div>
-		<div class="row" style="height: 15vh;">
+		<div class="row" style="text-align: center">
+				<input type="checkbox" id="notransfer" name="notransfer" >
+				<label for="notransfer">I do not want to switch buses</label>
+		</div>
+		<div class="row" style="height: 15vh">
 			<a href="javascript:findWay();" class="btn btn-default btn-lg btn-block">Find me a way</a>
 		</div>
 		<div class="row" id="results">
@@ -73,10 +83,38 @@
 	<script type="text/javascript" src="../resources/static/js/fromTo.js"></script>
 	<script type="text/javascript">
 		/* $('#locationTest').locationpicker(); */
+		
+		var defLat=40.5008186;
+		var defLng=-74.44739909999998;
+		
+		if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+	       	defLat = position.coords.latitude,
+	       	defLng = position.coords.longitude
+			$('#fromMap').locationpicker({
+			    location: {
+			        latitude: defLat,
+			        longitude: defLng
+			    },
+			    radius: 0,
+			    zoom: 17,
+			    inputBinding: {
+			        latitudeInput: $('#fromLat'),
+			        longitudeInput: $('#fromLng'),
+			        locationNameInput: $('#fromAddress')
+			    },
+			    enableAutocomplete: true,
+			    autocompleteOptions: {
+			        componentRestrictions: {country: 'us'}
+			    }
+			});
+        }, function() {
+          //handleLocationError(true, infoWindow, map.getCenter());
+          alert("Could not fetch current location. Please enter manually");
 		$('#fromMap').locationpicker({
 		    location: {
-		        latitude: 40.5008186,
-		        longitude: -74.44739909999998
+		        latitude: defLat,
+		        longitude: defLng
 		    },
 		    radius: 0,
 		    zoom: 17,
@@ -90,6 +128,30 @@
 		        componentRestrictions: {country: 'us'}
 		    }
 		});
+        });
+      } else {
+        // Browser doesn't support Geolocation
+        //handleLocationError(false, infoWindow, map.getCenter());
+          alert("Could not fetch current location. Please enter manually");
+		$('#fromMap').locationpicker({
+		    location: {
+		        latitude: defLat,
+		        longitude: defLng
+		    },
+		    radius: 0,
+		    zoom: 17,
+		    inputBinding: {
+		        latitudeInput: $('#fromLat'),
+		        longitudeInput: $('#fromLng'),
+		        locationNameInput: $('#fromAddress')
+		    },
+		    enableAutocomplete: true,
+		    autocompleteOptions: {
+		        componentRestrictions: {country: 'us'}
+		    }
+		});
+      }
+		
 		$('#toMap').locationpicker({
 		    location: {
 		        latitude: 40.5008186,

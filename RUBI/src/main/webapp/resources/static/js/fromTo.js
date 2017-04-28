@@ -1,5 +1,5 @@
 function findWay(){
-	var dto = { fromLat: $('#fromLat').val(), fromLng: $('#fromLng').val(), toLat: $('#toLat').val(), toLng: $('#toLng').val() };
+	var dto = { fromLat: $('#fromLat').val(), fromLng: $('#fromLng').val(), toLat: $('#toLat').val(), toLng: $('#toLng').val(), notransfer: $('#notransfer').is(':checked') };
 	$.ajax({
 		method: "POST",
 		url: "../direction/findWayAjax",
@@ -7,6 +7,9 @@ function findWay(){
 		success: function( msg ) {
 			//alert( msg );
 			$('#results').html(msg);
+			$('html, body').animate({
+				scrollTop: $("#results").offset().top
+			}, 1000);
 		},
 		error:function( msg ) {
 			alert( dto );
